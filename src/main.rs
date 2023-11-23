@@ -41,23 +41,23 @@ async fn main() -> std::io::Result<()> {
 
 async fn getMatches(req: HttpRequest,payload: web::Json<Query>) -> Result<HttpResponse,Error>{
     let file_path = "data/sampleIndex.json".to_owned();
-    let queryTerms = payload.words.clone();
+    let queryTerms: Vec<String> = payload.words.iter().map(|term|term.to_lowercase()).collect();
     
     if queryTerms.len() < 1{
         return Ok(HttpResponse::Ok()
             .content_type("text/plain")
             .body("Empty Query"));
     }
-    let mut indexList = Vec::<(String, f64)>::new();
-    indexList.push(("data/Index1.json".to_owned(), 1.0));
-    indexList.push(("data/Index2.json".to_owned(), 5.0));
+    let mut indexList = Vec::<(String, f64, String)>::new();
+    indexList.push(("data/Index1.json".to_owned(), 1.0, "field1".to_owned()));
+    indexList.push(("data/Index2.json".to_owned(), 5.0, "field2".to_owned()));
     let mut queryScores = Scores::new();
     for word in queryTerms.iter(){
         let mut result = Scores::new();
-        for (filePath, weight) in indexList.iter(){
+        for (filePath, weight,field) in indexList.iter(){
             let indexFound: Option<Index> = getIndex(filePath, word)?;
             if let Some(indexJson) = indexFound{
-                result.update(indexJson, *weight);    
+                result.update(indexJson, *weight, field);    
             }
         }
         queryScores.intersect(result);
