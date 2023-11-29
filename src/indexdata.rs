@@ -26,7 +26,7 @@ impl InvertedIndex {
             .push(("data/Index2.json".to_owned(), 5.0, "field2".to_owned()));
         output
             .indexList
-            .push(("data/title.json".to_owned(), 5.0, "title".to_owned()));
+            .push(("data/title.json".to_owned(), 10.0, "title".to_owned()));
 
         for (filePath, weight, field) in output.indexList.iter() {
             let mut f1 = File::open(filePath).unwrap();
@@ -135,7 +135,7 @@ impl MovieData {
         let mut iter = rdr.deserialize();
         while let Some(result) = iter.next() {
             let record: RatingRecord = result.unwrap();
-            output.ratings.insert(record.id, record.rating as f64* (record.num as f64));
+            output.ratings.insert(record.id, (record.rating as f64 - 2.5f64)* (record.num as f64).log2());
         }
         output
     }

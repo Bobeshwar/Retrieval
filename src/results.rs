@@ -52,9 +52,10 @@ impl Scores{
     pub fn update(&mut self, newIndex: Index, weight: f64, field: &String){
         for doc in newIndex.documents.into_iter(){
             self.documents.entry(doc.clone()).or_default().insert(field.to_string());
+            let newWeight: f64 = weight + (1.0f64/(newIndex.document_count as f64 + 1f64).log10());
             match(self.termScores.get(&doc)){
-                Some(score) => self.termScores.insert(doc, *score + weight),
-                None => self.termScores.insert(doc, weight)
+                Some(score) => self.termScores.insert(doc, *score + newWeight),
+                None => self.termScores.insert(doc, newWeight)
             };
         }
     }
