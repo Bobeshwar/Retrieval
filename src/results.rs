@@ -15,7 +15,6 @@ pub struct Index {
 pub struct Scores {
     termScores: HashMap<String,f64>,
     documents: HashMap<String, HashSet<String>>,
-    created: bool
 }
 
 
@@ -46,7 +45,6 @@ impl Scores{
         let mut result = Scores{
             termScores: HashMap::new(),
             documents: HashMap::new(),
-            created: true
         };
         
         return result;
@@ -62,20 +60,15 @@ impl Scores{
     }
 
     pub fn intersect(&mut self, newScores: Scores){
-        if self.created{
-            *self = newScores;
-            self.created = false;
-        } else {
-            self.documents.retain(|document, _matches|newScores.documents.contains_key(document));
-            self.termScores.retain(|document, _termScore|newScores.documents.contains_key(document));
-            for (document, matches) in newScores.documents.into_iter(){
-                match(self.termScores.get(&document)){
-                    Some(score) => {self.termScores.insert(document.clone(), *score + newScores.termScores.get(&document).unwrap());},
-                    None => ()
-                };
-                for field in matches.iter(){ 
-                    self.documents.entry(document.clone()).or_default().insert(field.to_string());
-                }
+            // self.documents.retain(|document, _matches|newScores.documents.contains_key(document));
+            // self.termScores.retain(|document, _termScore|newScores.documents.contains_key(document));
+        for (document, matches) in newScores.documents.into_iter(){
+            match(self.termScores.get(&document)){
+                Some(score) => {self.termScores.insert(document.clone(), *score + newScores.termScores.get(&document).unwrap());},
+                None => {self.termScores.insert(document.clone(), *newScores.termScores.get(&document).unwrap());}
+            };
+            for field in matches.iter(){ 
+                self.documents.entry(document.clone()).or_default().insert(field.to_string());
             }
         }
     }
