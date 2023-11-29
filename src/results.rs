@@ -7,8 +7,8 @@ use std::sync::Arc;
 #[derive(Serialize, Deserialize)]
 pub struct Index {
     pub term: String,
-    documents: Vec<String>,
-    document_count: i64,
+    pub documents: Vec<String>,
+    pub document_count: i64,
 
 }
 
@@ -58,6 +58,10 @@ impl Scores{
                 None => self.term_scores.insert(doc, new_weight)
             };
         }
+    }
+
+    pub fn rerank(&mut self, genres: Vec<String>){
+
     }
 
     pub fn intersect(&mut self, new_scores: Scores){

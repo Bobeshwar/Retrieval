@@ -1,3 +1,0 @@
-{"term": "apple", "documents": ["1","2","3","4"], "document_count": 4}
-{"term": "banana", "documents": ["1","2","3"], "document_count": 3}
-{"term": "pear", "documents": ["1","2"], "document_count": 2}

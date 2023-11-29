@@ -1,10 +1,10 @@
 use crate::results::{Index, Scores};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufRead, BufReader, Error, Seek, SeekFrom};
 use std::str;
-use serde::{Deserialize,Serialize};
 
 pub struct InvertedIndex {
     pub index_list: Vec<(String, f64, String)>,
@@ -19,18 +19,37 @@ impl InvertedIndex {
             index_offsets: HashMap::new(),
         };
 
-        output
-            .index_list
-            .push(("data/Index1.json".to_owned(), 1.0, "field1".to_owned()));
-        output
-            .index_list
-            .push(("data/Index2.json".to_owned(), 5.0, "field2".to_owned()));
+        output.index_list.push((
+            "data/actor_to_movies.json".to_owned(),
+            10.0,
+            "actor".to_owned(),
+        ));
+        output.index_list.push((
+            "data/actress_to_movies.json".to_owned(),
+            10.0,
+            "actress".to_owned(),
+        ));
+        output.index_list.push((
+            "data/director_to_movies.json".to_owned(),
+            10.0,
+            "director".to_owned(),
+        ));
+        output.index_list.push((
+            "data/producer_to_movies.json".to_owned(),
+            10.0,
+            "producer".to_owned(),
+        ));
+        output.index_list.push((
+            "data/writer_to_movies.json".to_owned(),
+            10.0,
+            "writer".to_owned(),
+        ));
         output
             .index_list
             .push(("data/title.json".to_owned(), 10.0, "title".to_owned()));
 
         for (file_path, _weight, field) in output.index_list.iter() {
-            let  f1 = File::open(file_path).unwrap();
+            let f1 = File::open(file_path).unwrap();
             let mut reader = BufReader::new(f1);
             let mut buffer = Vec::<u8>::new();
             let mut bytes_so_far: u64 = 0;
@@ -40,7 +59,7 @@ impl InvertedIndex {
                     match serde_json::from_slice::<Index>(&buffer) {
                         Ok(index_json) => {
                             offsets_map
-                                .insert(index_json.term.clone(), (bytes_so_far, some_bytes as u64));
+                                .insert(index_json.term.to_lowercase(), (bytes_so_far, some_bytes as u64));
                         }
                         Err(content) => println!("Error {}", content),
                     }
@@ -98,7 +117,7 @@ pub struct MovieData {
 pub struct RatingRecord {
     id: String,
     rating: f32,
-    num: u32
+    num: u32,
 }
 
 impl MovieData {
@@ -113,7 +132,7 @@ impl MovieData {
         let mut buffer = Vec::<u8>::new();
         let mut bytes_so_far: u64 = 0;
         bytes_so_far += reader.read_until(b'\n', &mut buffer).unwrap() as u64;
-        buffer.clear();                                             
+        buffer.clear();
         while let Ok(some_bytes) = reader.read_until(b'\n', &mut buffer) {
             if some_bytes != 0 {
                 let parts = str::from_utf8(&buffer).unwrap();
@@ -131,29 +150,33 @@ impl MovieData {
         }
         println!("Building ratings database");
         let f2 = File::open("data/Ratings.tsv").unwrap();
-        let mut rdr = csv::ReaderBuilder::new()
-            .delimiter(b'\t')
-            .from_reader(f2);
+        let mut rdr = csv::ReaderBuilder::new().delimiter(b'\t').from_reader(f2);
         let mut iter = rdr.deserialize();
         while let Some(result) = iter.next() {
             let record: RatingRecord = result.unwrap();
-            output.ratings.insert(record.id, (record.rating as f64 - 2.5f64)* (record.num as f64).log2());
+            output.ratings.insert(
+                record.id,
+                (record.rating as f64 - 2.5f64) * (record.num as f64).log2(),
+            );
         }
         println!("Complete ratings and details database");
         output
     }
 
-    pub fn get_movie_details( &self,id: String) -> Option<MovieRecord>{
+    pub fn get_movie_details(&self, id: String) -> Option<MovieRecord> {
         match self.details.get(&id) {
             None => None,
             Some(offsets) => {
-
                 let mut f1 = File::open("data/TitleData.tsv").unwrap();
                 let _ = f1.seek(SeekFrom::Start(offsets.0));
                 let mut buffer = vec![0u8; offsets.1];
                 let _ = f1.read_exact(&mut buffer);
-                let parts: Vec<&str> = str::from_utf8(&buffer).unwrap().split("\t").into_iter().collect();
-                let result = MovieRecord{
+                let parts: Vec<&str> = str::from_utf8(&buffer)
+                    .unwrap()
+                    .split("\t")
+                    .into_iter()
+                    .collect();
+                let result = MovieRecord {
                     titletype: parts[1].to_owned(),
                     primarytitle: parts[2].to_owned(),
                     originaltitle: parts[3].to_owned(),
@@ -168,10 +191,10 @@ impl MovieData {
         }
     }
 
-    pub fn get_movie_rating_score(&self, id: &String) -> f64{
-        match self.ratings.get(id){
+    pub fn get_movie_rating_score(&self, id: &String) -> f64 {
+        match self.ratings.get(id) {
             Some(val) => *val,
-            None => 0.0
+            None => 0.0,
         }
     }
 }
