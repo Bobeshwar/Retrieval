@@ -17,15 +17,21 @@ pub struct Scores {
     documents: HashMap<String, HashSet<String>>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct ApiResult {
+    movie: MovieRecord,
+    fields: Vec<String>
+}
+
 
 impl Scores{
-    pub fn get_top_k( mut self, k:usize,movie_data: Arc<MovieData>) -> Vec<(MovieRecord, Vec<String>)>{
+    pub fn get_top_k( mut self, k:usize,movie_data: Arc<MovieData>) -> Vec<ApiResult>{
         let mut list: Vec<(String, f64)> = Vec::new();
         for (key,val ) in self.term_scores.into_iter(){
             list.push((key.clone(),val+ movie_data.get_movie_rating_score(&key)));
         };
         list.sort_by(|a, b| a.1.partial_cmp(&b.1).map(Ordering::reverse).unwrap());
-        let mut output:Vec<(MovieRecord, Vec<String>)> = Vec::new();
+        let mut output:Vec<ApiResult> = Vec::new();
         output.reserve(k);
         let mut k = k;
         if list.len() < k{
@@ -33,7 +39,7 @@ impl Scores{
         }
         for i in 0..k{
             if let Some(matches) =  self.documents.remove(&list[i].0){
-                output.push(( movie_data.get_movie_details(list[i].0.clone()).unwrap() , (matches).into_iter().collect()));
+                output.push(ApiResult{ movie: movie_data.get_movie_details(list[i].0.clone()).unwrap() ,fields: (matches).into_iter().collect()});
             }
             
         }

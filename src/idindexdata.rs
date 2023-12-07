@@ -1,4 +1,3 @@
-use crate::indexdata::MovieRecord;
 use crate::results::{Index, Scores};
 use std::collections::HashMap;
 use std::fs::File;
@@ -53,15 +52,15 @@ impl IdIndex {
             f0.read_exact(&mut buffer)?;
             match serde_json::from_slice::<MetaDataList>(buffer.as_slice()) {
                 Ok(index_found) => {
-                    let mut movieTitles = HashMap::<String, Vec<String>>::new();
-                    movieTitles.insert("actor".to_owned(), index_found.actors);
-                    movieTitles.insert("actress".to_owned(), index_found.actresses);
-                    movieTitles.insert("director".to_owned(), index_found.directors);
-                    movieTitles.insert("producer".to_owned(), index_found.producers);
-                    movieTitles.insert("writer".to_owned(), index_found.writers);
+                    let mut movie_titles = HashMap::<String, Vec<String>>::new();
+                    movie_titles.insert("actor".to_owned(), index_found.actors);
+                    movie_titles.insert("actress".to_owned(), index_found.actresses);
+                    movie_titles.insert("director".to_owned(), index_found.directors);
+                    movie_titles.insert("producer".to_owned(), index_found.producers);
+                    movie_titles.insert("writer".to_owned(), index_found.writers);
                     for (file_path, weight, field) in self.index_list.iter() {
                         let mut f1 = File::open(file_path).unwrap();
-                        for title in movieTitles.get(field).unwrap().into_iter(){
+                        for title in movie_titles.get(field).unwrap().into_iter(){
                             let titleoffsets = self.index_offsets.get(field).unwrap().get(title).unwrap();
                             let mut buffer = vec![0u8; titleoffsets.1 as usize];
                             f1.seek(SeekFrom::Start(titleoffsets.0))?;
