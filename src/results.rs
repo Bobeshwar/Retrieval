@@ -60,8 +60,18 @@ impl Scores{
         }
     }
 
-    pub fn rerank(&mut self, genres: Vec<String>){
-
+    pub fn rerank(&mut self, genres: Vec<String>, movie_data: Arc<MovieData>){
+        for (document, _scores) in self.documents.iter(){
+            for genre in movie_data.get_movie_details(document.to_owned()).unwrap().genres.split(","){
+                for match_genre in genres.iter(){
+                    if genre == match_genre{
+                        if let Some(score) = self.term_scores.get(document){
+                            self.term_scores.insert(document.to_owned(),*score + 10.0 );
+                        }   
+                    }
+                }
+            }
+        } 
     }
 
     pub fn intersect(&mut self, new_scores: Scores){

@@ -28,14 +28,14 @@ async fn index(data: web::Data<AppState>) -> String {
 
 #[derive(Serialize, Deserialize)]
 struct Query {
-    words: Vec<String>,
+    query: String,
 }
 
 #[derive(Serialize, Deserialize)]
 struct SimilarityQuery {
     title_id: String,
     genres: Vec<String>,
-    original_query: Vec<String> 
+    original_query: String 
 }
 
 
@@ -66,7 +66,8 @@ async fn get_similar(req: HttpRequest, payload: web::Json<SimilarityQuery>) -> R
     if let Some(result) = req.app_data::<web::Data<AppState>>() {
         let query_terms: Vec<String> = payload
             .original_query
-            .iter()
+            .split_whitespace()
+            .into_iter()
             .map(|term| term.to_lowercase())
             .collect();
 
@@ -87,7 +88,7 @@ async fn get_similar(req: HttpRequest, payload: web::Json<SimilarityQuery>) -> R
             Err(text) => panic!("{}", text),
         }
 
-        query_scores.rerank(payload.genres.clone());
+        query_scores.rerank(payload.genres.clone(), Arc::clone(&result.data));
 
         if !query_scores.empty() {
             return Ok(HttpResponse::Ok()
@@ -109,8 +110,9 @@ async fn get_similar(req: HttpRequest, payload: web::Json<SimilarityQuery>) -> R
 async fn get_matches(req: HttpRequest, payload: web::Json<Query>) -> Result<HttpResponse, Error> {
     if let Some(result) = req.app_data::<web::Data<AppState>>() {
         let query_terms: Vec<String> = payload
-            .words
-            .iter()
+            .query
+            .split_whitespace()
+            .into_iter()
             .map(|term| term.to_lowercase())
             .collect();
 

@@ -99,6 +99,7 @@ impl InvertedIndex {
 
 #[derive(Serialize, Deserialize)]
 pub struct MovieRecord {
+    titleid: String,
     titletype: String,
     primarytitle: String,
     originaltitle: String,
@@ -106,7 +107,7 @@ pub struct MovieRecord {
     startyear: String,
     endyear: String,
     runtimeminutes: String,
-    genres: String,
+    pub genres: String,
 }
 pub struct MovieData {
     ratings: HashMap<String, f64>,
@@ -177,6 +178,7 @@ impl MovieData {
                     .into_iter()
                     .collect();
                 let result = MovieRecord {
+                    titleid: id,
                     titletype: parts[1].to_owned(),
                     primarytitle: parts[2].to_owned(),
                     originaltitle: parts[3].to_owned(),
