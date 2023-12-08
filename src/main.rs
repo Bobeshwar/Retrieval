@@ -5,7 +5,8 @@ mod results;
 mod indexdata;
 mod idindexdata;
 
-use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer};
+use actix_cors::Cors;
+use actix_web::{get, web,App, HttpRequest, HttpResponse, HttpServer, http};
 use serde::{Deserialize, Serialize};
 
 
@@ -45,8 +46,16 @@ async fn main() -> std::io::Result<()> {
     let index_offsets_original=  Arc::new(InvertedIndex::new());
     let data_original = Arc::new(MovieData::new());
     let id_index_original = Arc::new(IdIndex::new());
+    println!("Starting server..");
     HttpServer::new(move|| {
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allowed_methods(vec!["GET", "POST"])
+            .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+            .allowed_header(http::header::CONTENT_TYPE)
+            .max_age(3600);
         App::new()
+            .wrap(cors)
             .app_data(web::Data::new(AppState {
                 app_name: String::from("Actix Web"),
                 index_offsets: Arc::clone(&index_offsets_original),
