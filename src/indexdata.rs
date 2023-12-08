@@ -21,22 +21,22 @@ impl InvertedIndex {
 
         output.index_list.push((
             "data/actor_to_movies.json".to_owned(),
-            10.0,
+            15.0,
             "actor".to_owned(),
         ));
         output.index_list.push((
             "data/actress_to_movies.json".to_owned(),
-            10.0,
+            15.0,
             "actress".to_owned(),
         ));
         output.index_list.push((
             "data/director_to_movies.json".to_owned(),
-            10.0,
+            17.0,
             "director".to_owned(),
         ));
         output.index_list.push((
             "data/producer_to_movies.json".to_owned(),
-            10.0,
+            15.0,
             "producer".to_owned(),
         ));
         output.index_list.push((
@@ -46,7 +46,7 @@ impl InvertedIndex {
         ));
         output
             .index_list
-            .push(("data/title.json".to_owned(), 10.0, "title".to_owned()));
+            .push(("data/title.json".to_owned(), 20.0, "title".to_owned()));
 
         for (file_path, _weight, field) in output.index_list.iter() {
             let f1 = File::open(file_path).unwrap();
@@ -157,7 +157,7 @@ impl MovieData {
             let record: RatingRecord = result.unwrap();
             output.ratings.insert(
                 record.id,
-                (record.rating as f64 - 2.5f64) * (record.num as f64).log2(),
+                (record.rating as f64 * record.num as f64).log10(),
             );
         }
         println!("Complete ratings and details database");
