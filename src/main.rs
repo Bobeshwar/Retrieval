@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
             .route("/match", web::post().to(get_matches))
             .route("/similar", web::post().to(get_similar))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
