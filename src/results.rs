@@ -70,7 +70,6 @@ impl Scores{
 
     pub fn rerank(&mut self, genres: Vec<String>, movie_data: Arc<MovieData>){
         for (document, _scores) in self.documents.iter(){
-            println!("{}", document);
             if let Some(movie) = movie_data.get_movie_details(document.to_owned()){
                 for genre in movie.genres.split(","){
                     for match_genre in genres.iter(){
