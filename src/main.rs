@@ -1,6 +1,6 @@
 use crate::results::Scores;
 use crate::indexdata::{InvertedIndex, MovieData};
-use crate::idindexdata::{IdIndex};
+use crate::idindexdata::IdIndex;
 mod results;
 mod indexdata;
 mod idindexdata;
