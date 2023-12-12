@@ -74,6 +74,7 @@ async function evaluateMultipleResultsSimilarity(){
         const newresult = await evaluateResultMultipleOutputSimilarity(record.original_query,  record.title_id, record.genres, record.results);
         recall += newresult.Recall;
         map += newresult.MAP;
+        console.log(record.original_query, JSON.stringify(newresult));
     }
     const finalResult = {"MAP": map/testData.length, "Recall": recall/testData.length};
     return finalResult;
@@ -96,6 +97,7 @@ async function evaluateMultipleResults(){
         console.log(record.query, JSON.stringify(newresult));
         recall += newresult.Recall;
         map += newresult.MAP;
+        console.log(record.query, JSON.stringify(newresult));
     }
     const finalResult = {"MAP": map/testData.length, "Recall": recall/testData.length};
     return finalResult;
@@ -124,6 +126,7 @@ async function evaluateSingleResults(){
         if (newresult > 0){
             recall += 1
         }
+        console.log(record.query, JSON.stringify(newresult));
     }
     const finalResult = {"MRR":result/testData.length, "Recall": recall/testData.length};
     return finalResult;
