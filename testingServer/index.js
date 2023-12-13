@@ -66,6 +66,8 @@ async function evaluateMultipleResultsSimilarity(){
         {original_query: "deathly hallows", genres : ["Adventure","Family","Fantasy"], title_id : "tt0926084", results:["tt0241527","tt0295297","tt0330373","tt0304141", "tt0373889","tt0417741","tt0926084","tt1201607"]},
         {original_query: "avengers", genres: ["Action","Sci-Fi"], title_id: "tt0848228", results:["tt0848228", "tt4154756", "tt2395427", "tt4154796", "tt0458339", "tt1843866","tt0371746", "tt1228705", "tt0800080", "tt0800369"]},
         {original_query: "inception", genres: ["Action","Adventure","Sci-Fi"], title_id: "tt1375666", results:["tt0816692","tt0468569","tt0109830", "tt0137523"]},
+        {original_query: "The martian", genres: ["Sci-Fi","Adventure","Drama"], title_id: "tt3659388", results:["tt5520670","tt5520656","tt0625570","tt3199240"]},
+        {original_query: "the nun", genres: ["Horror","Mystery","Thriller"], title_id: "tt5814060", results:["tt10160976","tt7069210","tt5140878","tt3322940","tt4670016"]},
 
     ]
     recall = 0;
@@ -88,7 +90,12 @@ async function evaluateMultipleResults(){
         {query: "wind waker", results: ["tt0325724", "tt3206522"]},
         {query: "daniel radcliffe emma watson rupert grint", results: ["tt0241527","tt0295297","tt0330373","tt0304141", "tt0373889","tt0417741","tt0926084","tt1201607"]},
         {query: "joe pesci scorsese", results: ["tt1302006","tt0081398","tt0099685", "tt0112641", "tt11353562"]},
-        {query: "christopher nolan", results: ["tt15398776","tt0468569", "tt0816692","tt1375666","tt6723592","tt5013056","tt0209144","tt1345836","tt0372784","tt0482571"]}
+        {query: "christopher nolan", results: ["tt15398776","tt0468569", "tt0816692","tt1375666","tt6723592","tt5013056","tt0209144","tt1345836","tt0372784","tt0482571"]},
+        {query: "sherlock holmes", results: ["tt15352088","tt5923678","tt0988045","tt1515091","tt0086661","tt0090509"]},
+        {query: "lord rings", results: ["tt0167260","tt0120737","tt0167261","tt7631058","tt0077869"]},
+        {query: "tom Cruise", results: ["tt0325710",'tt28429157']},
+        {query: "ridley scott", results: ["tt0118158","tt0346645"]},
+        {query: "Chris Hemsworth", results: ["tt6222498","tt0145568"]}
     ]
     recall = 0;
     map = 0;
@@ -116,7 +123,12 @@ async function evaluateSingleResults(){
         {query: "parasite bong joon ho", result: "tt6751668"},
         {query: "2001 space odyssey", result: "tt0062622"},
         {query: "the godfather", result: "tt0068646"},
-        {query: "Pardessus économique", result: "tt3978256"}
+        {query: "Pardessus économique", result: "tt3978256"},
+        {query: "Hallucinated Alchemist", result: "tt0000152"},
+        {query: "Beyond the Sunset", result: "tt0000488"},
+        {query: "400 Tricks", result: "tt0000567"},
+        {query: "Hercules the Athlete", result: "tt0000780"},
+        {query: "Final Settlement", result: "tt0001216"},
     ]
     let recall = 0;
     let result = 0;
